@@ -12,17 +12,102 @@ The **pipeline** folder contains an AWS CloudFormation template for a pipeline u
 The **helpers** folder contains script to help deploy Serverless applications locally and run calls against API Gateway.
 
 ## Usage
+Once pre-requisites are installed and configured, run following :
 
-### 1. Deploy
+### 1. Create an Amazon S3 Bucket. Replace <S3-bucket-name> with a valid bucket name.
+
+```
+aws s3 mb s3://<S3-bucket-name>
+```
+
+### 2. Deploy
 
 To deploy any sample, go to the sample folder and run the following commands:
 
 ```
-export S3_BUCKET="serverless-samples-observability"
+export S3_BUCKET="<S3-bucket-name>"
 make
 ```
 
-### 2. Send test traffic
+Replace <S3-bucket-name> with a valid bucket name.
+
+### 3. Enable CloudWatch Logs for your API 
+
+**3.a.** To enable CloudWatch Logs for all or only some of the methods, you must also specify the ARN of an IAM role that enables API Gateway to write information to CloudWatch Logs on behalf of your IAM user. This is one time activity. If you have done this, skip to next step.
+
+   i. Sign in to the IAM console at https://console.aws.amazon.com/iam.
+
+**ii.** In the navgation pane, choose **Roles**, and then click on **Create Role** button.
+
+**iii.** Under **Select type of trusted entity**, Choose **API Gateway** under section 'Or select a service to view its use cases'.
+
+This should automatically attach the managed policy of **AmazonAPIGatewayPushToCloudWatchLogs**, which contains the following access policy statement:
+```
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:DescribeLogGroups",
+                "logs:DescribeLogStreams",
+                "logs:PutLogEvents",
+                "logs:GetLogEvents",
+                "logs:FilterLogEvents"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+```
+
+The IAM role must also contain the following trust relationship statement:
+
+```
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "",
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "apigateway.amazonaws.com"
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+```
+
+**iv.** Follow the wizard and create the IAM Role. 
+
+**v.** Copy the Role's ARN which should be in format **"arn:aws:iam::<account-id>:role/<role-name>"**
+
+**3.b.** Sign in to the API Gateway console at https://console.aws.amazon.com/apigateway.
+
+**3.c.** To enable CloudWatch Logs, choose Settings from the APIs main navigation pane. Then enter the ARN of an IAM role in the CloudWatch log role ARN text field.
+
+**3.d.** Back in the API Gateway Console, In the **APIs** pane, choose the API, and then choose Stages.
+
+**3.d.** In the **Stages** pane, choose the name of the stage.
+
+**3.f.** In the **Stage Editor** pane, choose the Settings tab.
+
+**3.g.** To enable Amazon CloudWatch Logs for all of the methods associated with this stage of this API Gateway API, do the following:
+
+   **i.** Under the **CloudWatch Settings** section, select the **Enable CloudWatch Logs** option.    
+
+   **ii.** For Log level, choose **INFO** to include all ERROR events, as well as extra informational events.
+
+   **iii.** To log full API call request and response information, select **Log full requests/responses** data. No sensitive data is logged unless the Log full requests/responses data option is selected.
+
+   **iv.** To have API Gateway report to CloudWatch the API metrics of API calls, Latency, Integration latency, 400 errors, and 500 errors, choose the Enable Detailed CloudWatch Metrics option. For more information about CloudWatch, see the Amazon CloudWatch User Guide.
+
+   **v.** Choose **Save Changes**. The new settings take effect after a new deployment.
+
+### 4. Send test traffic
 
 To send test traffic for a particular sample, run this command in the sample folder:
 
