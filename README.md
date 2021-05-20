@@ -130,7 +130,7 @@ Replace <S3-bucket-name> with a valid bucket name from previous step.
     - To have API Gateway report to CloudWatch the API metrics of API calls, Latency, Integration latency, 400 errors, and 500 errors, choose the Enable Detailed CloudWatch Metrics option. For more information about CloudWatch, see the Amazon CloudWatch User Guide.
     - Choose **Save Changes**. The new settings take effect after a new deployment.
     
-    ![Fig. Prod Stage CloudWatch settings](../images/APIGW-Stage-CloudWatchSettings.png)
+    ![Fig. Prod Stage CloudWatch settings](/images/APIGW-Stage-CloudWatchSettings.png)
 
 ### 4. Send test traffic
 
@@ -147,8 +147,8 @@ By default, this will send 10 PUT requests and 500 GET requests. Run this comman
 After sending test traffic, you can check traces and the service map in the [AWS Service Lens Console](https://console.aws.amazon.com/cloudwatch/home).
 
 
-![Fig. x-ray-demo CloudWatch ServiceLens](./images/Servicelens-demo1.png)
-![Fig. x-ray-instrumented-demo CloudWatch ServiceLens](./images/Servicelens-demo2-instrumented.png)
+![Fig. x-ray-demo CloudWatch ServiceLens](/images/Servicelens-demo1.png)
+![Fig. x-ray-instrumented-demo CloudWatch ServiceLens](/images/Servicelens-demo2-instrumented.png)
 
 ### 6. Cleanup
 
