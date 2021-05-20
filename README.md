@@ -11,35 +11,41 @@ The **pipeline** folder contains an AWS CloudFormation template for a pipeline u
 
 The **helpers** folder contains script to help deploy Serverless applications locally and run calls against API Gateway.
 
+## Requirements
+
+
+The samples require below list programs to be installed on your computer.
+
+The **easiest way** to do this is to setup a Cloud9 environment on AWS and use it for experimentation. 
+AWS Cloud9 is a cloud-based integrated development environment (IDE) that lets you write, run, and debug your code with just a browser. It includes a code editor, debugger, and terminal. Cloud9 comes prepackaged with essential tools for popular programming languages, including JavaScript, Python, PHP, and more, so you don’t need to install files or configure your development machine to start new projects.
+[Getting started with AWS Cloud9](https://aws.amazon.com/cloud9/getting-started/)
+
+
+Required programs :
+* [AWS Command Line Interface](https://aws.amazon.com/cli/)
+* [AWS SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html)
+* [Docker](https://docs.docker.com/install/)
+* [Go](https://golang.org/dl/)
+* [Python 3](https://www.python.org/downloads/)
+
+You would also need to install the [cfn_flip](https://github.com/awslabs/aws-cfn-template-flip) package for Python3. You can install it with Pip by running `python3 -m pip install cfn_flip`.
+
+
+
+
 ## Usage
 Once pre-requisites are installed and configured, run following :
 
-### 1. Create an Amazon S3 Bucket. Replace <S3-bucket-name> with a valid bucket name.
 
-```
-aws s3 mb s3://<S3-bucket-name>
-```
+### 1. Create IAM Role for API Gateway to send CloudWatch Logs for your API 
 
-### 2. Deploy
+To enable CloudWatch Logs for all or only some of the methods, you must also specify the ARN of an IAM role that enables API Gateway to write information to CloudWatch Logs on behalf of your IAM user. This is one time activity. If you have done this, skip to next step.
 
-To deploy any sample, go to the sample folder and run the following commands:
+- Sign in to the IAM console at https://console.aws.amazon.com/iam.
 
-```
-export S3_BUCKET="<S3-bucket-name>"
-make
-```
+- In the navgation pane, choose **Roles**, and then click on **Create Role** button.
 
-Replace <S3-bucket-name> with a valid bucket name.
-
-### 3. Enable CloudWatch Logs for your API 
-
-**3.a.** To enable CloudWatch Logs for all or only some of the methods, you must also specify the ARN of an IAM role that enables API Gateway to write information to CloudWatch Logs on behalf of your IAM user. This is one time activity. If you have done this, skip to next step.
-
-   i. Sign in to the IAM console at https://console.aws.amazon.com/iam.
-
-**ii.** In the navgation pane, choose **Roles**, and then click on **Create Role** button.
-
-**iii.** Under **Select type of trusted entity**, Choose **API Gateway** under section 'Or select a service to view its use cases'.
+- Under **Select type of trusted entity**, Choose **API Gateway** under section 'Or select a service to view its use cases'.
 
 This should automatically attach the managed policy of **AmazonAPIGatewayPushToCloudWatchLogs**, which contains the following access policy statement:
 ```
@@ -63,7 +69,7 @@ This should automatically attach the managed policy of **AmazonAPIGatewayPushToC
 }
 ```
 
-The IAM role must also contain the following trust relationship statement:
+  The IAM role must also contain the following trust relationship statement:
 
 ```
 {
@@ -81,31 +87,50 @@ The IAM role must also contain the following trust relationship statement:
 }
 ```
 
-**iv.** Follow the wizard and create the IAM Role. 
+- Follow the wizard and create the IAM Role. 
 
-**v.** Copy the Role's ARN which should be in format **"arn:aws:iam::<account-id>:role/<role-name>"**
+- Copy the Role's ARN which should be in format **"arn:aws:iam::<account-id>:role/<role-name>"**
 
-**3.b.** Sign in to the API Gateway console at https://console.aws.amazon.com/apigateway.
 
-**3.c.** To enable CloudWatch Logs, choose Settings from the APIs main navigation pane. Then enter the ARN of an IAM role in the CloudWatch log role ARN text field.
+### 2. Create an Amazon S3 Bucket. 
+Replace <S3-bucket-name> with a valid bucket name.
 
-**3.d.** Back in the API Gateway Console, In the **APIs** pane, choose the API, and then choose Stages.
+```
+aws s3 mb s3://<S3-bucket-name>
+```
 
-**3.d.** In the **Stages** pane, choose the name of the stage.
+### 3. Deploy
 
-**3.f.** In the **Stage Editor** pane, choose the Settings tab.
+To deploy any sample, go to the sample folder and run the following commands:
 
-**3.g.** To enable Amazon CloudWatch Logs for all of the methods associated with this stage of this API Gateway API, do the following:
+```
+export S3_BUCKET="<S3-bucket-name>"
+make
+```
 
-   **i.** Under the **CloudWatch Settings** section, select the **Enable CloudWatch Logs** option.    
+Replace <S3-bucket-name> with a valid bucket name from previous step.
 
-   **ii.** For Log level, choose **INFO** to include all ERROR events, as well as extra informational events.
+### 4. Enable CloudWatch Logs for your API 
 
-   **iii.** To log full API call request and response information, select **Log full requests/responses** data. No sensitive data is logged unless the Log full requests/responses data option is selected.
+- Sign in to the API Gateway console at https://console.aws.amazon.com/apigateway.
 
-   **iv.** To have API Gateway report to CloudWatch the API metrics of API calls, Latency, Integration latency, 400 errors, and 500 errors, choose the Enable Detailed CloudWatch Metrics option. For more information about CloudWatch, see the Amazon CloudWatch User Guide.
+-  Choose **Settings** from the APIs main navigation pane. Then paste the ARN of the IAM role from previous step, in the **CloudWatch log role ARN** text field.
 
-   **v.** Choose **Save Changes**. The new settings take effect after a new deployment.
+- Back in the API Gateway Console, In the **APIs** pane, choose the API, and then choose Stages.
+
+- In the **Stages** pane, choose the name of the stage **Prod**.
+
+- In the **Stage Editor** pane, choose the Settings tab.
+
+- To enable Amazon CloudWatch Logs for all of the methods associated with this stage of this API Gateway API, do the following:
+
+    - Under the **CloudWatch Settings** section, select the **Enable CloudWatch Logs** option.    
+    - For Log level, choose **INFO** to include all ERROR events, as well as extra informational events.
+    -  To log full API call request and response information, select **Log full requests/responses** data. No sensitive data is logged unless the Log full requests/responses data option is selected.
+    - To have API Gateway report to CloudWatch the API metrics of API calls, Latency, Integration latency, 400 errors, and 500 errors, choose the Enable Detailed CloudWatch Metrics option. For more information about CloudWatch, see the Amazon CloudWatch User Guide.
+    - Choose **Save Changes**. The new settings take effect after a new deployment.
+    
+    ![Fig. Prod Stage CloudWatch settings](../images/APIGW-Stage-CloudWatchSettings.png)
 
 ### 4. Send test traffic
 
@@ -115,13 +140,17 @@ To send test traffic for a particular sample, run this command in the sample fol
 make calls
 ```
 
-By default, this will send 10 PUT requests and 500 GET requests.
+By default, this will send 10 PUT requests and 500 GET requests. Run this command multiple times to send more traffic.
 
-### 3. Check traces
+### 5. Check Amazon CloudWatch Service Lens
 
-After sending test traffic, you can check traces and the service map in the [AWS Console](https://console.aws.amazon.com/xray/home).
+After sending test traffic, you can check traces and the service map in the [AWS Service Lens Console](https://console.aws.amazon.com/cloudwatch/home).
 
-### 4. Cleanup
+
+![Fig. x-ray-demo CloudWatch ServiceLens](./images/Servicelens-demo1.png)
+![Fig. x-ray-instrumented-demo CloudWatch ServiceLens](./images/Servicelens-demo2-instrumented.png)
+
+### 6. Cleanup
 
 To tear down resources, run this command in the sample folder:
 
@@ -129,24 +158,7 @@ To tear down resources, run this command in the sample folder:
 make delete
 ```
 
-
-## Requirements
-
-The samples require these programs to be installed on your computer:
-
-* [AWS Command Line Interface](https://aws.amazon.com/cli/)
-* [AWS SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html)
-* [Docker](https://docs.docker.com/install/)
-* [Go](https://golang.org/dl/)
-* [Python 3](https://www.python.org/downloads/)
-
-You would also need to install the [cfn_flip](https://github.com/awslabs/aws-cfn-template-flip) package for Python3. You can install it with Pip by running `python3 -m pip install cfn_flip`.
-
-The easiest way to do this is to setup a Cloud9 environment on AWS and use it for experimentation. 
-AWS Cloud9 is a cloud-based integrated development environment (IDE) that lets you write, run, and debug your code with just a browser. It includes a code editor, debugger, and terminal. Cloud9 comes prepackaged with essential tools for popular programming languages, including JavaScript, Python, PHP, and more, so you don’t need to install files or configure your development machine to start new projects.
-[Getting started with AWS Cloud9](https://aws.amazon.com/cloud9/getting-started/))
-
-Please delete the Cloud9 environment once you are done with experimentation.
+If you used Cloud9, then please delete the Cloud9 environment once you are done with experimentation.
 
 
 ## Troubleshooting
