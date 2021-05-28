@@ -110,27 +110,6 @@ make
 
 Replace <S3-bucket-name> with a valid bucket name from previous step.
 
-### 4. Enable CloudWatch Logs for your API 
-
-- Sign in to the API Gateway console at https://console.aws.amazon.com/apigateway.
-
--  Choose **Settings** from the APIs main navigation pane. Then paste the ARN of the IAM role from previous step, in the **CloudWatch log role ARN** text field.
-
-- Back in the API Gateway Console, In the **APIs** pane, choose the API, and then choose Stages.
-
-- In the **Stages** pane, choose the name of the stage **Prod**.
-
-- In the **Stage Editor** pane, choose the Settings tab.
-
-- To enable Amazon CloudWatch Logs for all of the methods associated with this stage of this API Gateway API, do the following:
-
-    - Under the **CloudWatch Settings** section, select the **Enable CloudWatch Logs** option.    
-    - For Log level, choose **INFO** to include all ERROR events, as well as extra informational events.
-    -  To log full API call request and response information, select **Log full requests/responses** data. No sensitive data is logged unless the Log full requests/responses data option is selected.
-    - To have API Gateway report to CloudWatch the API metrics of API calls, Latency, Integration latency, 400 errors, and 500 errors, choose the Enable Detailed CloudWatch Metrics option. For more information about CloudWatch, see the Amazon CloudWatch User Guide.
-    - Choose **Save Changes**. The new settings take effect after a new deployment.
-    
-    ![Fig. Prod Stage CloudWatch settings](/images/APIGW-Stage-CloudWatchSettings.png)
 
 ### 4. Send test traffic
 

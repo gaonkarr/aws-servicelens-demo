@@ -12,6 +12,10 @@ Globals:
     Tracing: Active
   Api:
     TracingEnabled: true
+    MethodSettings:
+    - LoggingLevel: INFO
+      ResourcePath: /*
+      HttpMethod: '*'
 
 Resources:
   GetItemFunction:

@@ -1,5 +1,5 @@
 ENVIRONMENT ?= dev
-STACK_NAME ?= sample-xray-$(ENVIRONMENT)
+STACK_NAME ?= sample-servicelens-$(ENVIRONMENT)
 
 all: build package deploy
 
