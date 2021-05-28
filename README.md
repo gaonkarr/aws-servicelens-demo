@@ -43,12 +43,14 @@ To enable CloudWatch Logs for all or only some of the methods, you must also spe
 
 Create Role :
 ```
-aws iam create-role --role-name APIGW-CloudWatchLogs --assume-role-policy-document file://CloudWatchLogsTrustPolicy.json
+aws iam create-role --role-name APIGW-CloudWatchLogs \
+     --assume-role-policy-document file://CloudWatchLogsTrustPolicy.json
 ```
 
 Attach Policy to Role :
 ```
-aws iam attach-role-policy --role-name APIGW-CloudWatchLogs --policy-arn arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs
+aws iam attach-role-policy --role-name APIGW-CloudWatchLogs \
+     --policy-arn arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs
 
 ```
 
@@ -56,7 +58,9 @@ Update the IAM Role ARN for logging to CloudWatch Logs
 
 ```
 export CWROLE_ARN=`aws iam get-role --role-name APIGW-CloudWatchLogs --query 'Role.Arn'`
-aws apigateway update-account --patch-operations op='replace',path='/cloudwatchRoleArn',value=$CWROLE_ARN
+
+aws apigateway update-account \
+    --patch-operations op='replace',path='/cloudwatchRoleArn',value=$CWROLE_ARN
 ```
 
 ### 2. Create an Amazon S3 Bucket. 
