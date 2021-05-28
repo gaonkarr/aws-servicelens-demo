@@ -39,7 +39,7 @@ Once pre-requisites are installed and configured, run following :
 
 ### 1. Create IAM Role for API Gateway to send CloudWatch Logs for your API 
 
-To enable CloudWatch Logs for all or only some of the methods, you must also specify the ARN of an IAM role that enables API Gateway to write information to CloudWatch Logs on behalf of your IAM user. This is one time activity. If you have done this, skip to next step.
+To enable CloudWatch Logs for all or only some of the methods, you must also specify the ARN of an IAM role that enables API Gateway to write information to CloudWatch Logs on behalf of your IAM user. This is one time activity. **If you have done this, skip to next step.**
 
 Create Role :
 ```
@@ -64,7 +64,7 @@ aws apigateway update-account \
 ```
 
 ### 2. Create an Amazon S3 Bucket. 
-Replace <S3-bucket-name> with a valid bucket name.
+Replace <S3-bucket-name> with a valid bucket name. This is one time activity. **If you have done this, skip to next step.**
 
 ```
 aws s3 mb s3://<S3-bucket-name>
@@ -96,8 +96,12 @@ By default, this will send 10 PUT requests and 500 GET requests. Run this comman
 
 After sending test traffic, you can check traces and the service map in the [AWS Service Lens Console](https://console.aws.amazon.com/cloudwatch/home).
 
+#### With Default Tracing :
 
 ![Fig. x-ray-demo CloudWatch ServiceLens](/images/Servicelens-demo1.png)
+
+#### With Instrumentation : 
+
 ![Fig. x-ray-instrumented-demo CloudWatch ServiceLens](/images/Servicelens-demo2-instrumented.png)
 
 ### 6. Cleanup
