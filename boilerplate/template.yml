@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
-Description: A boilerplate template for X-Ray integration.
+Description: A boilerplate template for X-Ray & CloudWatch Logs integration.
 
 Globals:
   Function:
@@ -9,6 +9,10 @@ Globals:
     Tracing: Active
   Api:
     TracingEnabled: true
+    MethodSettings:
+    - LoggingLevel: INFO
+      ResourcePath: /*
+      HttpMethod: '*'
 
 Resources:
   # Put your resources here

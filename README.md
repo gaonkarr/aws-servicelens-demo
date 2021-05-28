@@ -41,56 +41,23 @@ Once pre-requisites are installed and configured, run following :
 
 To enable CloudWatch Logs for all or only some of the methods, you must also specify the ARN of an IAM role that enables API Gateway to write information to CloudWatch Logs on behalf of your IAM user. This is one time activity. If you have done this, skip to next step.
 
-- Sign in to the IAM console at https://console.aws.amazon.com/iam.
-
-- In the navgation pane, choose **Roles**, and then click on **Create Role** button.
-
-- Under **Select type of trusted entity**, Choose **API Gateway** under section 'Or select a service to view its use cases'.
-
-This should automatically attach the managed policy of **AmazonAPIGatewayPushToCloudWatchLogs**, which contains the following access policy statement:
+Create Role :
 ```
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": [
-                "logs:CreateLogGroup",
-                "logs:CreateLogStream",
-                "logs:DescribeLogGroups",
-                "logs:DescribeLogStreams",
-                "logs:PutLogEvents",
-                "logs:GetLogEvents",
-                "logs:FilterLogEvents"
-            ],
-            "Resource": "*"
-        }
-    ]
-}
+aws iam create-role --role-name APIGW-CloudWatchLogs --assume-role-policy-document file://CloudWatchLogsTrustPolicy.json
 ```
 
-  The IAM role must also contain the following trust relationship statement:
+Attach Policy to Role :
+```
+aws iam attach-role-policy --role-name APIGW-CloudWatchLogs --policy-arn arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs
 
 ```
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Sid": "",
-      "Effect": "Allow",
-      "Principal": {
-        "Service": "apigateway.amazonaws.com"
-      },
-      "Action": "sts:AssumeRole"
-    }
-  ]
-}
+
+Update the IAM Role ARN for logging to CloudWatch Logs
+
 ```
-
-- Follow the wizard and create the IAM Role. 
-
-- Copy the Role's ARN which should be in format **"arn:aws:iam::<account-id>:role/<role-name>"**
-
+export CWROLE_ARN=`aws iam get-role --role-name APIGW-CloudWatchLogs --query 'Role.Arn'`
+aws apigateway update-account --patch-operations op='replace',path='/cloudwatchRoleArn',value=$CWROLE_ARN
+```
 
 ### 2. Create an Amazon S3 Bucket. 
 Replace <S3-bucket-name> with a valid bucket name.
@@ -109,6 +76,13 @@ make
 ```
 
 Replace <S3-bucket-name> with a valid bucket name from previous step.
+
+### 4. Enable CloudWatch Logs for your API 
+
+- Sign in to the API Gateway console at https://console.aws.amazon.com/apigateway.
+
+-  Choose **Settings** from the APIs main navigation pane. Then paste the ARN of the IAM role from previous step, in the **CloudWatch log role ARN** text field.
+
 
 
 ### 4. Send test traffic
