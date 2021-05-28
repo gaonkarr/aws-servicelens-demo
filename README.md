@@ -77,13 +77,6 @@ make
 
 Replace <S3-bucket-name> with a valid bucket name from previous step.
 
-### 4. Enable CloudWatch Logs for your API 
-
-- Sign in to the API Gateway console at https://console.aws.amazon.com/apigateway.
-
--  Choose **Settings** from the APIs main navigation pane. Then paste the ARN of the IAM role from previous step, in the **CloudWatch log role ARN** text field.
-
-
 
 ### 4. Send test traffic
 
